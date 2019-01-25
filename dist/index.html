@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> WebRTC </title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"> 
+
+</head>
+<body>
+
+
+     <div class="ui fixed inverted menu">
+         <div class="ui container">
+             <a href="#" class="header item">
+                 WebrTc 
+             </a>
+             <a href="#" class="item">Live Stream</a>
+         </div> 
+     </div>
+
+    <div class="ui container"> 
+        <br><br> 
+        <div class="ui two column grid"> 
+            
+            <div class="column">
+                <h1> Receiver</h1>
+                <video id="receive" height="400px" width="100%" controls=""></video>
+              <div class="ui warning message">
+                    <i class="settings icon"></i>
+                    <div class="content  ui form ">
+                        <form class="ui form">
+                        
+                        <button class="ui primary button"> Offer key</button>
+                         <button type="submit" class="ui button"><i class="save icon"></i> Commit Offer</button>
+                    </form></div>
+                    <div class="ui form"> 
+                        <textarea id="OfferReceiv"></textarea>
+                    </div> 
+            
+                        
+                </div>
+                <p>
+                <button class="positive ui button " id="start"><i class="play icon"></i> Play</button>
+                </p>
+            </div>
+            
+ 
+ 
+ 
+            <div class="column">
+                <h1> Emiter</h1>
+                <video id="emiter" height="400px" width="100%" controls=""></video>
+            
+                    <div class="ui warning message">
+                    <i class="settings icon"></i>
+                    <div class="header">
+                        <button class="ui primary button"> Offer key </button> 
+                     <button class="ui button" id="btncpEmit"><i class="mail icon"></i> send Invitation</button>
+                     <button class="ui button" id="clipBoard"><i class="clipboard icon"></i> Copy</button>
+                    </div>
+                    <div class="ui form">
+                    <textarea class="sub header" id="OfferEmit"></textarea>
+                    </div>
+                </div>
+            
+        
+        </div> 
+    
+    </div>
+    <!--<script src ="speer/SimplePeer.js"></script>--> 
+    <script src="/mainrtc.7156fea6.js"></script>
+</div></body>
+</html>

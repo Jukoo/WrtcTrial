@@ -1,0 +1,31 @@
+{
+        "UserMedia" : {
+        "audio" : true , 
+        "video" : true 
+    } ,
+    "PeerStreamOpt" : {
+        "initiator" : false  , 
+        "channelConfig":{} , 
+        "channelName" : "" , 
+        "config" : {
+            "iceServers" : [ 
+                {
+                    "urls": "stun:stun.l.google.com:19302"
+                } , 
+                {
+                    "urls":"stun:global.stun.twilio.com:3478?transport=udp"
+                }
+            ]
+        }, 
+        "constraints": {} , 
+        "offerConstraints":{} , 
+        "answerContraints":{}, 
+        "sdpTransform":"function(sdp){return sdp}" ,
+        "stream": false ,
+        "stream":[], 
+        "trickle":false , 
+        "allowHalfTrickle":false, 
+        "wrtc":{},
+        "objectMode" : false
+    }
+}
