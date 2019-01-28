@@ -7450,21 +7450,45 @@ var _module$exports;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
- *
- *
+ * script name lib.js  
  */
 var Rtc_Conf = require("./../rtc.conf.json");
+/**
+ * @namespace module.export 
+ */
+
 
 module.exports = (_module$exports = {}, _defineProperty(_module$exports, "RTC_wrapper", {
+  /**
+   * @access private 
+   * @function loadRtc_Default_Conf - load the Default iceServer present on rtc.conf.json 
+   * @param  {void} 
+   * @return {void} 
+   */
   loadRtc_Default_Conf: function loadRtc_Default_Conf() {
     var config = Rtc_Conf.PeerStreamOpt.config;
     return config;
   },
+
+  /** 
+   * @access protected
+   * @function Rtc_turn_enabling - enable the Turn servers if they are sets 
+   * @param  {string}  - urlsTurns  - the turns urls 
+   * @return {Object}  - the Config iceServers on rtc.conf.json 
+   */
   Rtc_turn_enabling: function Rtc_turn_enabling() {
     for (var _len = arguments.length, urlsTurns = new Array(_len), _key = 0; _key < _len; _key++) {
       urlsTurns[_key] = arguments[_key];
@@ -7484,11 +7508,28 @@ module.exports = (_module$exports = {}, _defineProperty(_module$exports, "RTC_wr
     } else module.exports.RTC_wrapper["loadRtc_Default_Conf"]();
   }
 }), _defineProperty(_module$exports, "user_media_default_opt", _objectSpread({}, Rtc_Conf.UserMedia)), _defineProperty(_module$exports, "sp_constraint", function sp_constraint(stream) {
+  var initConfIceServer;
+
+  for (var _len2 = arguments.length, turn_ip_addr = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    turn_ip_addr[_key2 - 1] = arguments[_key2];
+  }
+
+  var _ref = turn_ip_addr.length == 2 ? turn_ip_addr : [null, null],
+      _ref2 = _slicedToArray(_ref, 2),
+      turnIp = _ref2[0],
+      turnIp2 = _ref2[1];
+
+  if (turnIp && turnIp2) {
+    initConfIceServer = _objectSpread({}, module.exports.RTC_wrapper["Rtc_turn_enabling"](turnIp, turnIp2));
+  } else {
+    initConfIceServer = _objectSpread({}, module.exports.RTC_wrapper["Rtc_turn_enabling"]());
+  }
+
   if (stream) return {
     initiator: true,
     stream: stream,
     trickle: false,
-    config: _objectSpread({}, module.exports.RTC_wrapper["Rtc_turn_enabling"]())
+    config: _objectSpread({}, initConfIceServer)
   };else return {
     initiator: false,
     trickle: false
@@ -7585,13 +7626,14 @@ var RTC = {
    * @access public 
    * @function MediaStreamLauncher -the initiator of video stream
    * @param {void} 
-   * @return{void} 
+   * @return {void} 
    */
   MediaStreamLauncher: function MediaStreamLauncher() {
     start_btn.addEventListener("click", function (evt) {
-      if ("getUserMedia" in navigator) log("allowed");
+      if ("getUserMedia" in navigator) log("%c allowed", "background-color:green");
       navigator.mediaDevices["getUserMedia"](user_media_default_opt).then(function (stream) {
         speer = new Peer(_objectSpread({}, sp_constraint(stream)));
+        log(sp_constraint(stream, 12, 34));
         sp_bindEvt(speer, OfferEmit, OfferReceiv);
         emiter.srcObject = stream;
         emiter.play();
@@ -7604,7 +7646,7 @@ var RTC = {
   /** 
   * @function CommitOffer - register the offer comes from the 
   * user who is the initiator of the stream 
-  * @param {void} 
+  * @param  {void} 
   * @return {void}
   */
   CommitOffer: function CommitOffer() {
@@ -7671,7 +7713,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44177" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33327" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

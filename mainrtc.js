@@ -48,11 +48,11 @@ const RTC = {
      * @access public 
      * @function MediaStreamLauncher -the initiator of video stream
      * @param {void} 
-     * @return{void} 
+     * @return {void} 
      */ 
     MediaStreamLauncher () { 
         start_btn.addEventListener("click", evt => {
-            if("getUserMedia" in navigator)log("allowed")
+            if("getUserMedia" in navigator)log("%c allowed","background-color:green")
                 navigator.mediaDevices
                 ["getUserMedia"](user_media_default_opt).then(stream => {
                 speer = new Peer({...sp_constraint(stream)}) 
@@ -65,7 +65,7 @@ const RTC = {
      /** 
      * @function CommitOffer - register the offer comes from the 
      * user who is the initiator of the stream 
-     * @param {void} 
+     * @param  {void} 
      * @return {void}
      */
     CommitOffer () {
@@ -75,7 +75,6 @@ const RTC = {
                 speer = new Peer({...sp_constraint()})
                 sp_bindEvt(speer ,offertEmit , offertReceiv , receiver)
             }
-            //log("SIGTRANS")
             speer.signal(JSON.parse(offertReceiv.value))  
         })
     } , 
