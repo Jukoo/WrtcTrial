@@ -7,7 +7,8 @@
  */ 
 let speer = null  ; 
 const [ 
-    Peer= require("simple-peer")
+    Peer    = require("simple-peer") , 
+    adapter = require("webrtc-adapter")
 ] = process.argv.splice(1) , 
 {getEltID , cp2ClipBoard} =require("./RtcUtilities/DomManip").DOMHTML, 
 
@@ -41,8 +42,6 @@ const [
  * RTC module 
  * @namespace RTC 
  */ 
-log(Rtc_turn_enabling()) 
-
 const RTC = {
     /**
      * @access public 
@@ -54,11 +53,11 @@ const RTC = {
         start_btn.addEventListener("click", evt => {
             if("getUserMedia" in navigator)log("%c allowed","background-color:green")
                 navigator.mediaDevices
-                ["getUserMedia"](user_media_default_opt).then(stream => {
+                ["getUserMedia"](user_media_default_opt()).then(stream => {
                 speer = new Peer({...sp_constraint(stream)}) 
                 sp_bindEvt(speer,OfferEmit , OfferReceiv)
                 emiter.srcObject= stream
-                emiter.play() 
+               emiter.play() 
             }).catch(err => warn("permission denied!!")) 
         })
     }, 

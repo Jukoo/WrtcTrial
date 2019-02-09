@@ -1,7 +1,8 @@
 /**
  * script name lib.js  
  */ 
-const Rtc_Conf  = require("./../rtc.conf.json")
+//=>"RTCConf" // the local folder that  stored the configuration 
+const Rtc_Conf  = require("./../RTCConf/rtc.conf.json")
 
 /**
  * @namespace module.export 
@@ -20,56 +21,105 @@ module.exports= {
          * @return {void} 
          */ 
         loadRtc_Default_Conf () {
-             const {config} = Rtc_Conf.PeerStreamOpt
+             let {config} = Rtc_Conf.PeerStreamOpt
              return config 
         } , 
         /** 
          * @access protected
          * @function Rtc_turn_enabling - enable the Turn servers if they are sets 
-         * @param  {string}  - urlsTurns  - the turns urls 
+         * @param  {Object}  - urlsTurns  - the turns urls  urls - credential - username 
          * @return {Object}  - the Config iceServers on rtc.conf.json 
          */
-        Rtc_turn_enabling  (...urlsTurns) {
+        //=> destructuring input parameter
+        Rtc_turn_enabling  (urlsTurns) {
+            const Allowed_properties=  new Set(["urls" , "credential" , "username"])
+            try { 
+                Object.keys(urlsTurns).forEach(key=> {
+                    if (!Allowed_properties.has(key)) throw new RangeError(`unexpected key argument`)
+                })
+            }catch (err) {
+                if (err instanceof RangeError)console.warn(`${err.name}:${err.message}`)  
+            }
+
             if (urlsTurns) { 
                 const Turn_on =  module.exports.RTC_wrapper["loadRtc_Default_Conf"]() 
-                for(let ipAddr of urlsTurns) {
-                    Turn_on.iceServers.push({urls : ipAddr})
+                Turn_on.iceServers.push(urlsTurns) 
+                return Turn_on 
+            }else return module.exports.RTC_wrapper["loadRtc_Default_Conf"]() 
+        }
+    }, 
+    /**
+     * call this method if you want to use your own config file 
+     * this will be  stored on Rtc_conf file  
+     * @access public 
+     * Rtc_personnalConf_file 
+     * @param  {bool} is_file_set  [true] if you set your file config in json syntaxe  
+     * @return {Promise}  
+     */ 
+
+     Rtc_personnalConf_file (is_file_set){
+        const {Rtc_turn_enabling} = module.exports.RTC_wrapper
+         if(is_file_set){ 
+            return new Promise((resolve , reject)=> {
+                 try { 
+                    resolve(Rtc_turn_enabling(require(`
+                        ./../RTCConf/iSerTrun.json`
+                    ))) //create file named iSerTrun.json   
+                }catch(error) {
+                    reject(error)
                 }
-                 return Turn_on 
-            }else module.exports.RTC_wrapper["loadRtc_Default_Conf"]() 
+            })
+         }else {
+             console.error(`no argument found on parameters`) ; 
+             return false ; 
+         }
+     }, 
+
+    //Enable the  userMedias  *by default it sets on true if rtc.conf.json* 
+    user_media_default_opt (params) { 
+        const allowed_properties = new Set(["width" , "height"]) 
+        if(params == "object"  && params) {
+          for(const params_integrity in params) {
+                if(!allowed_properties.has[params_integrity]) {
+                    console.error("no allowed params ")
+                    return false ; 
+                }
+          } 
+            return{["audio"]:true, ["video"]:{...params}} 
+        }else {
+            return {...Rtc_Conf.UserMedia}
         }
     },  
-    //Enable the  userMedias  *by default it sets on true if rtc.conf.json* 
-    user_media_default_opt:{...Rtc_Conf.UserMedia} ,
 
     /** 
      * @access public 
      * @function sp_constraint - initialize the constraint on simple-peer module 
      * @param  {Object} - stream - the stream flux 
-     * @param  {array}  - turn_ip_addr - the turns ip address 
+     * @param  {boolean} - setting_turn_server  - if you set your own config turn Server  give true 
      * @return {Object}
      */
-    sp_constraint (stream , ...turn_ip_addr) {
-        let initConfIceServer;
-        const [turnIp , turnIp2] = turn_ip_addr.length ==2 ? turn_ip_addr : [null , null]; 
-        if (turnIp  && turnIp2) {
-            initConfIceServer={...module.exports.RTC_wrapper["Rtc_turn_enabling"](turnIp , turnIp2)}
-        }else  {
-            initConfIceServer ={...module.exports.RTC_wrapper["Rtc_turn_enabling"]()}
+    //=> call this function in Promise success 
+    sp_constraint (stream , iceServerTurns) {
+        let initConfIceServer=new Object("") 
+        if(iceServerTurns) {
+            initConfIceServer = {...module.exports.RTC_wrapper["Rtc_turn_enabling"](iceServerTurns)}
+        }else {
+            initConfIceServer = {...module.exports.RTC_wrapper["Rtc_turn_enabling"]()}
         }
-        if (stream)
+        if (stream){
             return {
                 initiator : true  , 
                 stream    : stream,
                 trickle   : false, 
                 config :{...initConfIceServer} 
             }
-         else 
+        }else{ 
             return {
                 initiator : false,
                 trickle   : false
             } 
-    }, 
+        }
+    },  
     /**
      * @access public 
      * @function sp_bindEvt - bind event on simple-peer object 
@@ -109,4 +159,9 @@ module.exports= {
             }
         }
     } 
+}
+
+
+const Destruc_MEX  = module => {
+    
 }
